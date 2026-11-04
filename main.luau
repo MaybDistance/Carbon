@@ -1,10 +1,10 @@
 
 --[[
-    NEXUS v3.1.6
+    CARBON v3.1.6
     Complete interface redesign with the v3.1.4 systems preserved
 
     Includes:
-    - Automatic NEXUS folder creation
+    - Automatic configuration folder creation (legacy NEXUS path retained)
     - Save configuration
     - Load configuration
     - JSON validation
@@ -122,7 +122,7 @@ local function Notify(message)
 
     pcall(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "NEXUS v3.1.6",
+            Title = "CARBON v3.1.6",
             Text = tostring(message),
             Duration = 3
         })
@@ -583,7 +583,7 @@ local function GetTarget()
     return best
 end
 
--- UI | NEXUS v3.1.6 — COMPLETE COMMAND-CENTER REDESIGN
+-- UI | CARBON v3.1.6 — CARBON//SIGNAL INTERFACE
 -- The existing aim, ESP, visuals, configuration and update systems remain below.
 
 local TweenService = game:GetService("TweenService")
@@ -661,7 +661,7 @@ local function MakeLabel(parent, name, text, position, size, font, textSize, col
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "NEXUS_v316"
+ScreenGui.Name = "Carbon_v316"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -676,7 +676,7 @@ if not ScreenGui.Parent then
 end
 
 local Main = Instance.new("Frame")
-Main.Name = "NEXUSCommandCenter"
+Main.Name = "CarbonCommandCenter"
 Main.Size = UDim2.fromOffset(1040, 700)
 Main.Position = UDim2.new(0.5, -520, 0.5, -350)
 Main.BackgroundColor3 = Palette.Background
@@ -721,7 +721,7 @@ local BrandGlyph = MakeLabel(
 BrandGlyph.TextXAlignment = Enum.TextXAlignment.Center
 
 local Title = MakeLabel(
-    Top, "BrandTitle", "NEXUS  /  CARBON SIGNAL",
+    Top, "BrandTitle", "CARBON",
     UDim2.fromOffset(73, 10), UDim2.fromOffset(300, 28),
     Enum.Font.GothamBlack, 18, Palette.Text
 )
@@ -863,7 +863,7 @@ CurrentPageMeta.Size = UDim2.fromOffset(142, 22)
 CurrentPageMeta.Position = UDim2.new(1, -142, 0, 0)
 CurrentPageMeta.BackgroundColor3 = Palette.PanelRaised
 CurrentPageMeta.BorderSizePixel = 0
-CurrentPageMeta.Text = "NEXUS  /  ACTIVE"
+CurrentPageMeta.Text = "CARBON  /  ACTIVE"
 CurrentPageMeta.TextColor3 = Palette.Muted
 CurrentPageMeta.Font = Enum.Font.GothamBold
 CurrentPageMeta.TextSize = 8
@@ -889,7 +889,7 @@ local PageInfo = {
     ESP = {"Player Overlay", "INFORMATION LAYER", "Choose what player information appears on your display."},
     Visuals = {"Visual Suite", "RENDER OPTIONS", "Manage character highlights and personal visual elements."},
     Settings = {"System Settings", "PREFERENCES", "Manage interface behaviour, performance and shortcuts."},
-    Customize = {"Personalization", "WORKSPACE STYLE", "Adjust the NEXUS interface and manage your configuration."},
+    Customize = {"Personalization", "WORKSPACE STYLE", "Adjust the CARBON interface and manage your configuration."},
 }
 
 local function NextPageOrder(page)
@@ -994,7 +994,7 @@ local function SwitchPage(name)
     local info = PageInfo[name]
     CurrentPageLabel.Text = string.upper(info[1])
     CurrentPageLabel.TextColor3 = Config.Accent
-    CurrentPageMeta.Text = "NEXUS  /  " .. string.upper(name)
+    CurrentPageMeta.Text = "CARBON  /  " .. string.upper(name)
 end
 
 local function AddSection(page, sectionName)
@@ -1481,7 +1481,7 @@ AddSlider(VisualPage, "Crosshair Size", "CrosshairSize", 3, 20, 1)
 AddSection(SettingsPage, "Interface and performance")
 AddKeybind(SettingsPage, "Menu Toggle Key", "MenuKey")
 AddButton(SettingsPage, "Emergency Reopen", function()
-    Notify("Use your configured menu key to reopen NEXUS")
+    Notify("Use your configured menu key to reopen CARBON")
 end)
 AddToggle(SettingsPage, "Notifications", "Notifications")
 AddToggle(SettingsPage, "Performance Mode", "PerformanceMode")
@@ -1505,8 +1505,80 @@ AddButton(CustomizePage, "Accent / Pink", function() SetAccent(Color3.fromRGB(25
 AddButton(CustomizePage, "Accent / Cyan", function() SetAccent(Color3.fromRGB(45, 210, 220)) end)
 AddButton(CustomizePage, "Accent / Orange", function() SetAccent(Color3.fromRGB(255, 155, 65)) end)
 AddButton(CustomizePage, "Accent / Ice", function() SetAccent(Color3.fromRGB(190, 215, 255)) end)
+
+-- One-click interface presets. These update the UI accent and the visual
+-- colors together, while leaving aim and gameplay settings untouched.
+AddSection(CustomizePage, "Complete color themes")
+local function SetThemePreset(accent, visual)
+    Config.Accent = accent
+    Config.FOVColor = visual
+    Config.ESPColor = visual
+    Config.ChamsColor = visual
+    Config.SkeletonColor = visual
+    Config.CrosshairColor = visual
+    RefreshAllControls()
+    AppearanceDirty = true
+    ScheduleSave()
+    Notify("Color theme applied")
+end
+AddButton(CustomizePage, "Theme / Carbon Signal", function()
+    SetThemePreset(Color3.fromRGB(190, 245, 90), Color3.fromRGB(190, 245, 90))
+end)
+AddButton(CustomizePage, "Theme / Arctic", function()
+    SetThemePreset(Color3.fromRGB(105, 205, 255), Color3.fromRGB(105, 205, 255))
+end)
+AddButton(CustomizePage, "Theme / Ultraviolet", function()
+    SetThemePreset(Color3.fromRGB(165, 115, 255), Color3.fromRGB(165, 115, 255))
+end)
+AddButton(CustomizePage, "Theme / Ember", function()
+    SetThemePreset(Color3.fromRGB(255, 135, 75), Color3.fromRGB(255, 135, 75))
+end)
+AddButton(CustomizePage, "Theme / Rose", function()
+    SetThemePreset(Color3.fromRGB(255, 105, 155), Color3.fromRGB(255, 105, 155))
+end)
+AddButton(CustomizePage, "Theme / Monochrome", function()
+    SetThemePreset(Color3.fromRGB(220, 225, 230), Color3.fromRGB(220, 225, 230))
+end)
+
+AddSection(CustomizePage, "Overlay color presets")
+local function SetOverlayPalette(color)
+    Config.FOVColor = color
+    Config.ESPColor = color
+    Config.ChamsColor = color
+    Config.SkeletonColor = color
+    Config.CrosshairColor = color
+    AppearanceDirty = true
+    ScheduleSave()
+    Notify("Overlay colors updated")
+end
+AddButton(CustomizePage, "Overlay / Signal Lime", function() SetOverlayPalette(Color3.fromRGB(190, 245, 90)) end)
+AddButton(CustomizePage, "Overlay / Cyan", function() SetOverlayPalette(Color3.fromRGB(45, 210, 220)) end)
+AddButton(CustomizePage, "Overlay / Violet", function() SetOverlayPalette(Color3.fromRGB(135, 90, 255)) end)
+AddButton(CustomizePage, "Overlay / Red", function() SetOverlayPalette(Color3.fromRGB(245, 80, 100)) end)
+AddButton(CustomizePage, "Overlay / White", function() SetOverlayPalette(Color3.fromRGB(240, 240, 240)) end)
+
+AddSection(CustomizePage, "Interface layout")
 AddToggle(CustomizePage, "Compact Sidebar", "CompactSidebar")
 AddToggle(CustomizePage, "Overlay Visible", "UIVisible")
+AddSlider(CustomizePage, "Interface Scale", "UIScale", 0.7, 1.3, 0.05)
+AddSlider(CustomizePage, "Interface Transparency", "UITransparency", 0, 0.8, 0.05)
+AddToggle(CustomizePage, "Notifications", "Notifications")
+AddButton(CustomizePage, "Reset Appearance", function()
+    Config.Accent = GetColor(Defaults.Accent)
+    Config.FOVColor = GetColor(Defaults.FOVColor)
+    Config.ESPColor = GetColor(Defaults.ESPColor)
+    Config.ChamsColor = GetColor(Defaults.ChamsColor)
+    Config.SkeletonColor = GetColor(Defaults.SkeletonColor)
+    Config.CrosshairColor = GetColor(Defaults.CrosshairColor)
+    Config.CompactSidebar = Defaults.CompactSidebar
+    Config.UIScale = Defaults.UIScale
+    Config.UITransparency = Defaults.UITransparency
+    RefreshAllControls()
+    AppearanceDirty = true
+    ScheduleSave()
+    Notify("Appearance restored to defaults")
+end)
+
 AddSection(CustomizePage, "Configuration manager")
 AddButton(CustomizePage, "Save Configuration", function()
     SaveConfig(false)
@@ -2059,7 +2131,7 @@ Track(UIS.InputBegan:Connect(function(input)
         return
     end
 
-    -- Emergency recovery: INSERT always reopens NEXUS, even if the
+    -- Emergency recovery: INSERT always reopens CARBON, even if the
     -- menu was hidden or a keybind capture was active.
     if input.KeyCode == Enum.KeyCode.Insert then
         CaptureKey = nil
@@ -2067,7 +2139,7 @@ Track(UIS.InputBegan:Connect(function(input)
         MenuOpen = true
         Main.Visible = true
         ScheduleSave()
-        Notify("Emergency recovery: NEXUS reopened")
+        Notify("Emergency recovery: CARBON reopened")
         return
     end
 
@@ -2285,5 +2357,5 @@ if FileFunctionsAvailable() then
     end
 end
 
-Notify("NEXUS v3.1.6 loaded")
-print("NEXUS v3.1.6 loaded successfully!")
+Notify("CARBON v3.1.6 loaded")
+print("CARBON v3.1.6 loaded successfully!")
